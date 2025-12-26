@@ -1,79 +1,67 @@
 # Project Specification: "The Pitch" – Football Group Manager
 
 ## 1. Overview
-A dedicated mobile and web application for a private football group (25–35 players). The app manages weekly statistics, team organization, and features a dynamic "FIFA-style" card system that rewards performance with special visual skins.
+A dedicated mobile and web application for a private football group (25–35 players). The app manages weekly statistics, team organization, and features a dynamic "FIFA-style" card system with automated prestige skins.
 
 ---
 
 ## 2. User Roles & Profiles
 
 ### 2.1 Standard User Profile (FIFA Style)
-The profile is represented by a **FIFA/FC24 Ultimate Team card**.
-* **Personal Details:** First Name, Last Name, Age, and Preferred Position.
-* **Core Statistics:**
-    * **Matches Played:** Automatically calculated based on team assignments.
-    * **Total Goals Scored.**
-    * **Total Wins (Cups Won).**
-    * **Top Scorer Titles.**
-* **Form Guide:** A visual sequence (e.g., **W W L W D**) showing results of the last 5 games.
+* **Visual:** FIFA/FC24 Ultimate Team card layout.
+* **Stats:** Matches Played (MP), Goals, Wins (Cups), and Top Scorer titles.
+* **Form Guide:** A calculated array of the last 5 match outcomes (e.g., `['W', 'W', 'L', 'W', 'D']`).
 
 ### 2.2 Dynamic Weekly Skins (Prestige System)
-Player cards change their visual appearance based on the results of the most recent session.
-
-#### A) "King of Goals" (Top Scorer Skin)
-If a player was the Top Scorer in the latest session, their card is upgraded to the **Golden Boot Week** skin.
-* **Visuals:** Animated gold glow, premium frame, and subtle particle effects.
-* **Badge:** A "TOP SCORER - WEEK" ribbon displayed on the card.
-* **Duration:** Active until the next session's results are submitted.
-* **Tie-Breaker:** If multiple players tie for most goals, all receive the skin.
-
-#### B) "Match Winners" (Winning Team Skin)
-Every player on the winning team receives a special "Winner" design.
-* **Visuals:** Team-colored accents, silver shine effect, and a winner ribbon.
-* **Badge:** "WINNER - WEEK" badge.
-* **Hierarchy:** If a player is both a Winner and a Top Scorer, the **Top Scorer Skin** takes visual priority (or they combine effects).
+* **Golden Boot Skin:** Awarded to the player(s) with the `MAX(goals)` in the most recent session.
+* **Match Winner Skin:** Awarded to all 7 players belonging to the `winning_team_id` of the most recent session.
 
 ---
 
 ## 3. Core Features
 
-### 3.1 Home Screen: Dynamic Match Day
-On session days, the UI transforms into a "Match Center":
-* **The 3 Teams:** Detailed rosters for the 7-a-side teams.
-* **Kickoff Countdown:** Live timer counting down to game time.
-* **Active Skins:** Displaying the current "Top Scorer" and "Winners" from the previous week.
+### 3.1 Dynamic Match Day Home Screen
+* **State A (Standard):** Displays last week's "King of Goals" and "Winners."
+* **State B (Match Day):** Triggered by Admin. Displays the 3 team rosters and a live JS-based countdown timer to kickoff.
 
-### 3.2 Statistics & Leaderboard
-* **Global Leaderboard:** Sortable by all core metrics.
-* **Skin Visibility:** The special skins are visible everywhere (Leaderboard, Profile, and Match Center).
-* **Automated Tracking:** Assigning a player to a team automatically counts as a "Match Played."
+### 3.2 Team Organizer
+* 3 Teams | 7 Players per Team.
+* Supports "Guest" placeholders (names not linked to a User ID).
 
 ### 3.3 Selection Randomizer
-* **Function:** Ranks $n$ players/names randomly to determine team selection order.
+* Randomly ranks a selected list of names 1 through $n$.
 
 ---
 
 ## 4. Visual Design System
-
-
-
-* **Theme:** **Dark Mode** (Deep Charcoal / Navy Blue).
-* **Accent Color:** **Neon Green** (Pitch Green) for standard UI.
-* **Special Colors:** **Gold/Yellow** (Top Scorer) and **Electric Blue/Silver** (Winners).
-* **Card UI:** Rounded corners, high-quality player avatars, and bold "FIFA-style" stat numbers.
+* **Theme:** Dark Mode (Background: `#121212`, Surface: `#1E1E1E`).
+* **Primary Accent:** Neon Green (`#39FF14`).
+* **Special Effects:** CSS/Flutter linear-gradient animations for Golden Boot cards.
 
 ---
 
-## 5. Technical Requirements & Stack
+## 5. Technical Data Logic (For AI Implementation)
 
-* **Cross-Platform:** Flutter (Web, iOS, Android).
-* **Database:** **PostgreSQL (via Supabase)**.
-* **Skin Logic:** A `current_status` flag in the database that updates weekly when the Admin submits the match report.
+### 5.1 Database Schema (Relational)
 
-| Component | Technology |
-| :--- | :--- |
-| **Frontend** | Flutter |
-| **Backend** | Supabase (Postgres + Auth) |
-| **Animations** | Lottie or Rive (for card glows and particles) |
+
+* **Users Table:** `id, name, age, position, total_goals, total_wins, total_matches`.
+* **Matches Table:** `id, date, winning_team_id (nullable)`.
+* **Match_Entries Table:** `id, match_id, user_id, team_id, goals_scored`.
+
+### 5.2 Business Logic Calculations
+* **Form Guide Logic:** `SELECT outcome FROM match_entries WHERE user_id = :id ORDER BY match_date DESC LIMIT 5;`
+* **Top Scorer Logic:**
+    1. Filter `match_entries` for the latest `match_id`.
+    2. Identify `user_id` where `goals_scored` equals the maximum value in that set.
+* **Matches Played (Auto):**
+    Trigger: Whenever a row is created in `match_entries`, increment `users.total_matches`.
+
+---
+
+## 6. Technical Stack
+* **Frontend:** Flutter (Web/iOS/Android).
+* **Backend/Auth:** Supabase (PostgreSQL).
+* **Logic Processing:** Supabase Edge Functions (TypeScript).
 
 ---
