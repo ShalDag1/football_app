@@ -1,67 +1,63 @@
-# Football app for friends
+# Project Specification: "The Pitch" – Football Group Manager
 
+## 1. Overview
+A dedicated mobile and web application designed for a private group of 25–35 friends to manage weekly football sessions. The app focuses on tracking individual performance statistics, facilitating team organization, and determining player selection order via a randomization tool.
 
+---
 
-We are 25-35 friends who play footbal weekly , i want to build an app that everyplayer will use , the app need to be only for our fields.
+## 2. User Roles & Profiles
 
-here i will share the required features i want to be on the app:
+### 2.1 Standard User Profile
+Every player must register an account with a username and password.
+* **Personal Details:** First Name, Last Name, Age, and Preferred Position (e.g., Forward, Midfielder, Defender, Goalkeeper).
+* **Performance Metrics:** Users can view their lifetime statistics, including:
+    * **Total Goals Scored**
+    * **Total Wins (Cups Won)**
+    * **Top Scorer Titles** (Number of weeks finished as the leading goalscorer).
 
-## 1. User profile
+### 2.2 Admin Profile
+Admins possess all standard user capabilities plus the following privileges:
+* **Data Entry:** Input and submit match statistics (goals, wins, top scorers) following each session.
+* **User Management:** Add and manage users within the system.
+* **Team Management:** Finalize weekly team rosters and designate the winning team.
 
-  every user will need to register , with username and password(no strong password needed) and he will have is own profile(firstname, lastname, age, preferred role) .
-  the profile include some details , like name , preferred role , age ...
-  as well every player will have a statistics based on the games he have played ( sum of goals , sum of winnings - thats all, sum of being the top scorer ) 
-  the statiscs will be based on the admin that will submit them
-  1. every week each player assign to a team , a player can score goals and win the cup
-  2. every player have statistics of how much goals he scored , and how much cups he won
-  3. 
+---
 
- 
+## 3. Core Features
 
-## 2. Admin profile
-  1. admin is a user with same details as normal user((firstname, lastname, age, preferred role) and statistics, as well he have some privvileged
-  2. admin can upload statistics of games , the statiscs are all goals and winnings
-  3. admin can add users
-  4. admin 
+### 3.1 Statistics & Leaderboard
+This is the primary feature of the app, used for performance tracking and team scouting.
+* **Global Leaderboard:** A sortable table displaying all players. Users can sort by Goals, Wins, or Top Scorer titles.
+* **Filtering:** Ability to filter statistics by specific date ranges.
+* **Top Scorer Logic:** If multiple players share the highest goal count in a single week, all involved players are credited with a "Top Scorer" title for that session.
 
+### 3.2 Team Organizer
+* **Structure:** Support for 3 teams per session, with exactly 7 players per team.
+* **Flexibility:** Admins or users can assign registered players to teams or use "Guest Names" for one-time players.
+* **Result Submission:** After the match, the Admin selects the winning team, automatically awarding a "Cup" to those 7 players.
 
-# 3. statistics page
+### 3.3 Selection Randomizer
+A tool to help team leaders determine the order of player selection.
+* **Input:** Choose from existing users or enter custom names.
+* **Output:** Generates a randomized list ranked $1$ to $n$ to decide the selection sequence.
 
-  1. only admin can add statistics of players.
-  2. every user can see all players statiscs , and there is a table that can be sorted by goals or winnings(i.e who scored the most and who have most wins for) and also we can filter it by dates
-  3. the statistics is the main feature here , it will help team leaders to choose players based on statistics(which i said for now it only goals and winning cups)
+---
 
+## 4. Technical Requirements
 
-# 4. random
+* **Cross-Platform:** The app must be accessible as a web application and as a downloadable app for both iOS and Android.
+* **Database:** A relational database is preferred. **PostgreSQL** is the primary choice for data integrity and future scalability.
+* **Scalability:** The architecture should be modular to allow for the addition of new features in future versions (Beta Phase).
+* **Security:** High-level security is not a priority for this internal tool; simple authentication is sufficient.
 
-this feature is to help the team leaders to know who choose first , second and third. any user can go into the random page , they can choose 3 users(or more, or less) or ulpoad custon name , and the app will make a random who of those. it will rank them from 1...n
+---
 
+## 5. Recommended Technology Stack
 
+| Component | Technology Recommendation |
+| :--- | :--- |
+| **Frontend** | **Flutter** (Single codebase for Web, iOS, and Android) |
+| **Backend/DB** | **Supabase** (Hosted PostgreSQL, Auth, and API) |
+| **Hosting** | **Vercel** (for Web) and **App Store/Play Store** (for Mobile) |
 
-# 5. 
-
-
-
- - this app need to have small database , if postresql is good to the reasons , i preffered to use it , but it is not must.
- - give me some option to choose on how to build the app(which language , which technologies , which database , and everything else..)
- - this app need to work both on downloaded application for iphone , android , and on the web
- - this app dont need to be secured.
- - 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
+---
