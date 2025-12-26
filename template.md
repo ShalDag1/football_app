@@ -1,67 +1,62 @@
 # Project Specification: "The Pitch" – Football Group Manager
 
 ## 1. Overview
-A dedicated mobile and web application for a private football group (25–35 players). The app manages weekly statistics, team organization, and features a dynamic "FIFA-style" card system with automated prestige skins.
+A dedicated mobile and web application for a private football group (25–35 players). The app manages weekly statistics, team organization, and features a dynamic "FC24-style" card system with automated prestige skins.
 
 ---
 
 ## 2. User Roles & Profiles
 
 ### 2.1 Standard User Profile (FIFA Style)
-* **Visual:** FIFA/FC24 Ultimate Team card layout.
+* **Visual:** FC24 Ultimate Team card layout (Custom React Native Components).
 * **Stats:** Matches Played (MP), Goals, Wins (Cups), and Top Scorer titles.
-* **Form Guide:** A calculated array of the last 5 match outcomes (e.g., `['W', 'W', 'L', 'W', 'D']`).
+* **Form Guide:** A visual row of icons showing the last 5 match outcomes (e.g., `W-W-L-W-D`).
 
 ### 2.2 Dynamic Weekly Skins (Prestige System)
-* **Golden Boot Skin:** Awarded to the player(s) with the `MAX(goals)` in the most recent session.
-* **Match Winner Skin:** Awarded to all 7 players belonging to the `winning_team_id` of the most recent session.
+* **Golden Boot Skin:** Awarded to the session's Top Scorer. Features a premium "Gold" theme with animated particle effects.
+* **Match Winner Skin:** Awarded to the winning team. Features a "Champion" theme (e.g., Silver/Platinum or Electric Blue).
 
 ---
 
 ## 3. Core Features
 
-### 3.1 Dynamic Match Day Home Screen
-* **State A (Standard):** Displays last week's "King of Goals" and "Winners."
-* **State B (Match Day):** Triggered by Admin. Displays the 3 team rosters and a live JS-based countdown timer to kickoff.
+### 3.1 Home Screen: Dynamic Match Day
+* **Standard State:** Displays the current "Hall of Fame" (last week's winners).
+* **Match Day State:** on match day, Shows 3 teams (7 players each) and a live countdown to kickoff.
 
 ### 3.2 Team Organizer
-* 3 Teams | 7 Players per Team.
-* Supports "Guest" placeholders (names not linked to a User ID).
+* Logic for 3 teams. Supports both registered users and "Guest" placeholders.
+* Automatic "Match Played" incrementing when a player is assigned to a team.
 
 ### 3.3 Selection Randomizer
-* Randomly ranks a selected list of names 1 through $n$.
+* A utility to shuffle and rank a list of names/players 1 through $n$.
 
 ---
 
 ## 4. Visual Design System
-* **Theme:** Dark Mode (Background: `#121212`, Surface: `#1E1E1E`).
-* **Primary Accent:** Neon Green (`#39FF14`).
-* **Special Effects:** CSS/Flutter linear-gradient animations for Golden Boot cards.
+* **Theme:** Professional Dark Mode.
+* **Palette:** **[CLI TO CHOOSE]** – Create a high-contrast, premium sports palette (Avoid Neon Green). 
+* **Animations:** Use `react-native-reanimated` for card transitions and the "Golden Boot" glow.
 
 ---
 
-## 5. Technical Data Logic (For AI Implementation)
+## 5. Technical Data Logic
 
-### 5.1 Database Schema (Relational)
-
-
+### 5.1 Database Schema (Supabase/PostgreSQL)
 * **Users Table:** `id, name, age, position, total_goals, total_wins, total_matches`.
-* **Matches Table:** `id, date, winning_team_id (nullable)`.
+* **Matches Table:** `id, date, winning_team_id`.
 * **Match_Entries Table:** `id, match_id, user_id, team_id, goals_scored`.
 
-### 5.2 Business Logic Calculations
-* **Form Guide Logic:** `SELECT outcome FROM match_entries WHERE user_id = :id ORDER BY match_date DESC LIMIT 5;`
-* **Top Scorer Logic:**
-    1. Filter `match_entries` for the latest `match_id`.
-    2. Identify `user_id` where `goals_scored` equals the maximum value in that set.
-* **Matches Played (Auto):**
-    Trigger: Whenever a row is created in `match_entries`, increment `users.total_matches`.
+### 5.2 Business Logic
+* **Automated Stats:** Use PostgreSQL Triggers to update lifetime stats when a match entry is saved.
+* **Skin Logic:** A view or function that determines `current_week_skin` based on the most recent match record.
 
 ---
 
 ## 6. Technical Stack
-* **Frontend:** Flutter (Web/iOS/Android).
-* **Backend/Auth:** Supabase (PostgreSQL).
-* **Logic Processing:** Supabase Edge Functions (TypeScript).
+* **Frontend:** React Native + Expo (Web-enabled).
+* **Styling:** NativeWind (Tailwind CSS) for consistent design tokens.
+* **Backend:** Supabase (Auth, DB, and Realtime for the countdown).
+* **Deployment:** Expo EAS (Mobile) and Vercel (Web).
 
 ---
